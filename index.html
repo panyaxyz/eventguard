@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventGuard by Infinite Tries</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .nav {
+            background-color: #cccccc;
+            border: 2px solid #000000;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .nav a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .nav a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            background-color: #ffffff;
+            border: 2px solid #000000;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .search-box {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .search-box input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border: 2px solid #000;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #dddddd;
+            border: 2px solid #000;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #bbbbbb;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .category {
+            width: 200px;
+            height: 150px;
+            border: 2px solid #000;
+            background-color: #e8e8e8;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+
+        .category:hover {
+            background-color: #d0d0d0;
+        }
+
+        .category h3 {
+            margin: 10px 0;
+        }
+
+        .events-list {
+            margin: 20px 0;
+        }
+
+        .event {
+            border: 2px solid #000;
+            background-color: #f8f8f8;
+            margin-bottom: 15px;
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .event:hover {
+            background-color: #e8e8e8;
+        }
+
+        .event h3 {
+            margin: 0 0 10px 0;
+        }
+
+        .event-details {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .event-price {
+            float: right;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #000;
+            font-size: 16px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #dddddd;
+            border: 2px solid #000;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background-color: #bbbbbb;
+        }
+
+        .button-primary {
+            background-color: #666666;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background-color: #444444;
+        }
+
+        .ticket-section {
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f5f5f5;
+        }
+
+        .ticket-type {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #000;
+            margin-bottom: 10px;
+            background-color: white;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #000;
+            background-color: #ddd;
+            cursor: pointer;
+        }
+
+        .footer {
+            background-color: #cccccc;
+            border: 2px solid #000000;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .confirmation {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .confirmation h2 {
+            color: green;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .order-summary {
+            border: 2px solid #000;
+            padding: 20px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .categories {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .search-box input {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>EventGuard</h1>
+        <p>by Infinite Tries </p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('events')">Events</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('contact')">Contact</a>
+        <a onclick="showPage('login')" style="float: right;">Login</a>
+    </div>
+
+    <!-- Home Page -->
+    <div class="main-content">
+        <div class="page active" id="home">
+            <h2>Welcome to EventGuard!</h2>
+            <p>Your one-stop destination for buying event tickets online. Safe, secure, and simple!</p>
+            
+            <div class="search-box">
+                <input type="text" placeholder="Search for events..." id="searchInput">
+                <button onclick="showPage('events')">Search</button>
+            </div>
+
+            <h3>Browse by Category</h3>
+            <div class="categories">
+                <div class="category" onclick="showPage('events')">
+                    <h3>🎵 Music</h3>
+                    <p>Concerts and live music</p>
+                </div>
+                <div class="category" onclick="showPage('events')">
+                    <h3>🏈 Sports</h3>
+                    <p>Games and matches</p>
+                </div>
+                <div class="category" onclick="showPage('events')">
+                    <h3>🎭 Theater</h3>
+                    <p>Plays and shows</p>
+                </div>
+                <div class="category" onclick="showPage('events')">
+                    <h3>🎪 Comedy</h3>
+                    <p>Stand-up comedy</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Page -->
+        <div class="page" id="events">
+            <div class="breadcrumb">
+                <a onclick="showPage('home')">Home</a> &gt; Events
+            </div>
+            
+            <h2>Available Events</h2>
+            
+            <div class="search-box">
+                <input type="text" placeholder="Filter events...">
+                <button>Filter</button>
+            </div>
+
+            <div class="events-list">
+                <div class="event" onclick="showPage('event-detail')">
+                    <div class="event-price">From $45</div>
+                    <h3>Rock Concert 2025</h3>
+                    <div class="event-details">
+                        📅 March 15, 2025<br>
+                        📍 Madison Square Garden<br>
+                        🎵 Rock Music
+                    </div>
+                </div>
+
+                <div class="event" onclick="showPage('event-detail')">
+                    <div class="event-price">From $35</div>
+                    <h3>Basketball Game</h3>
+                    <div class="event-details">
+                        📅 March 20, 2025<br>
+                        📍 Sports Arena<br>
+                        🏈 Sports
+                    </div>
+                </div>
+
+                <div class="event" onclick="showPage('event-detail')">
+                    <div class="event-price">From $25</div>
+                    <h3>Comedy Night</h3>
+                    <div class="event-details">
+                        📅 March 25, 2025<br>
+                        📍 Comedy Club<br>
+                        🎪 Comedy
+                    </div>
+                </div>
+
+                <div class="event" onclick="showPage('event-detail')">
+                    <div class="event-price">From $60</div>
+                    <h3>Broadway Musical</h3>
+                    <div class="event-details">
+                        📅 April 1, 2025<br>
+                        📍 Theater District<br>
+                        🎭 Theater
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Detail Page -->
+        <div class="page" id="event-detail">
+            <div class="breadcrumb">
+                <a onclick="showPage('home')">Home</a> &gt; 
+                <a onclick="showPage('events')">Events</a> &gt; 
+                Rock Concert 2025
+            </div>
+            
+            <h2>Rock Concert 2025</h2>
+            
+            <div style="border: 2px solid #000; padding: 20px; margin: 20px 0; text-align: center; height: 200px; background-color: #f0f0f0;">
+                [EVENT IMAGE PLACEHOLDER]
+            </div>
+            
+            <h3>Event Information</h3>
+            <p><strong>Date:</strong> March 15, 2025 at 8:00 PM</p>
+            <p><strong>Venue:</strong> Madison Square Garden</p>
+            <p><strong>Address:</strong> 4 Pennsylvania Plaza, New York, NY 10001</p>
+            
+            <h3>About This Event</h3>
+            <p>Join us for an amazing rock concert featuring top artists! This will be the biggest event of 2025. Don't miss out on this incredible show with amazing music and great atmosphere.</p>
+            
+            <div class="ticket-section">
+                <h3>Select Your Tickets</h3>
+                
+                <div class="ticket-type">
+                    <div>
+                        <strong>General Admission</strong><br>
+                        <small>Standing area</small>
+                    </div>
+                    <div>$45</div>
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                        <span>0</span>
+                        <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="ticket-type">
+                    <div>
+                        <strong>Seating</strong><br>
+                        <small>Reserved seats</small>
+                    </div>
+                    <div>$75</div>
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                        <span>0</span>
+                        <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="ticket-type">
+                    <div>
+                        <strong>VIP Package</strong><br>
+                        <small>Best seats + perks</small>
+                    </div>
+                    <div>$150</div>
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+                        <span>0</span>
+                        <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #000;">
+                    <p><strong>Total: $<span id="total">0</span></strong></p>
+                    <button class="button button-primary" onclick="showPage('checkout')">Buy Tickets</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Page -->
+        <div class="page" id="checkout">
+            <div class="breadcrumb">
+                <a onclick="showPage('home')">Home</a> &gt; 
+                <a onclick="showPage('events')">Events</a> &gt; 
+                <a onclick="showPage('event-detail')">Rock Concert 2025</a> &gt; 
+                Checkout
+            </div>
+            
+            <h2>Checkout</h2>
+            
+            <div class="order-summary">
+                <h3>Your Order</h3>
+                <p>Rock Concert 2025 - General Admission (2 tickets) - $90.00</p>
+                <p>Service Fee - $9.00</p>
+                <hr>
+                <p><strong>Total: $99.00</strong></p>
+            </div>
+            
+            <div class="form-container">
+                <h3>Your Information</h3>
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number:</label>
+                    <input type="tel" required>
+                </div>
+                
+                <h3>Payment Information</h3>
+                <div class="form-group">
+                    <label>Card Number:</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" required>
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date:</label>
+                    <input type="text" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group">
+                    <label>CVV:</label>
+                    <input type="text" placeholder="123" required>
+                </div>
+                
+                <button class="button button-primary" style="width: 100%; padding: 15px;" onclick="showPage('confirmation')">
+                    Complete Purchase - $99.00
+                </button>
+            </div>
+        </div>
+
+        <!-- Login Page -->
+        <div class="page" id="login">
+            <h2>Login to EventGuard</h2>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" required>
+                </div>
+                
+                <button class="button button-primary" onclick="showPage('home')">Login</button>
+                
+                <p style="text-align: center; margin-top: 20px;">
+                    Don't have an account? <a href="#" style="color: #000;">Sign up here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div class="page" id="about">
+            <h2>About EventGuard</h2>
+            <p>EventGuard is a simple and secure ticket booking website created by Infinte Tries. We make it easy to find and buy tickets for your favorite events.</p>
+            
+            <h3>Why Choose EventGuard?</h3>
+            <ul>
+                <li>Simple and easy to use</li>
+                <li>Secure payment processing</li>
+                <li>Wide variety of events</li>
+                <li>Customer support available</li>
+                <li>Mobile-friendly design</li>
+            </ul>
+        </div>
+
+        <!-- Contact Page -->
+        <div class="page" id="contact">
+            <h2>Contact Us</h2>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label>Your Name:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Subject:</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Message:</label>
+                    <textarea style="width: 100%; height: 100px; padding: 10px; border: 2px solid #000;"></textarea>
+                </div>
+                
+                <button class="button button-primary">Send Message</button>
+            </div>
+            
+            <h3>Other Ways to Reach Us</h3>
+            <p><strong>Email:</strong> support@eventguard.com</p>
+            <p><strong>Phone:</strong> (555) 123-4567</p>
+            <p><strong>Address:</strong> 123 Main Street, City, State 12345</p>
+        </div>
+
+        <!-- Confirmation Page -->
+        <div class="page" id="confirmation">
+            <div class="confirmation">
+                <h2>✅ Order Complete!</h2>
+                <p>Thank you for your purchase! Your tickets have been sent to your email.</p>
+                
+                <div class="order-summary">
+                    <h3>Order Details</h3>
+                    <p><strong>Event:</strong> Rock Concert 2025</p>
+                    <p><strong>Date:</strong> March 15, 2025 at 8:00 PM</p>
+                    <p><strong>Venue:</strong> Madison Square Garden</p>
+                    <p><strong>Tickets:</strong> General Admission (2)</p>
+                    <p><strong>Order Number:</strong> EG20250001</p>
+                    <p><strong>Total Paid:</strong> $99.00</p>
+                </div>
+                
+                <button class="button button-primary" onclick="showPage('home')">Back to Home</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 EventGuard by Infinite Tries. All rights reserved.</p>
+        <p>Simple. Secure. Reliable.</p>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function changeQty(button, change) {
+            const qtySpan = button.parentNode.querySelector('span');
+            let currentQty = parseInt(qtySpan.textContent);
+            let newQty = currentQty + change;
+            
+            if (newQty < 0) newQty = 0;
+            if (newQty > 10) newQty = 10; // Max 10 tickets
+            
+            qtySpan.textContent = newQty;
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const prices = [45, 75, 150];
+            const quantities = document.querySelectorAll('.quantity-selector span');
+            let total = 0;
+            
+            quantities.forEach((span, index) => {
+                const qty = parseInt(span.textContent);
+                total += qty * prices[index];
+            });
+            
+            document.getElementById('total').textContent = total;
+        }
+    </script>
+</body>
+</html>;;/[]
